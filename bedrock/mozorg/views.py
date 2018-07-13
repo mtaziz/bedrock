@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
@@ -16,6 +18,7 @@ from bedrock.mozorg.forums import ForumsFile
 from bedrock.mozorg.models import ContributorActivity, TwitterCache
 from bedrock.mozorg.util import HttpResponseJSON
 from bedrock.newsletter.forms import NewsletterFooterForm
+from bedrock.pocketfeed.models import PocketArticle
 from bedrock.wordpress.views import BlogPostsView
 from lib import l10n_utils
 
@@ -181,10 +184,12 @@ class DeveloperView(BlogPostsView):
 
 def home_view(request):
     locale = l10n_utils.get_locale(request)
+    ctx = {}
 
     if locale.startswith('en-'):
         template_name = 'mozorg/home/home-en.html'
+        ctx['pocket_articles'] = PocketArticle.objects.all()
     else:
         template_name = 'mozorg/home/home.html'
 
-    return l10n_utils.render(request, template_name)
+    return l10n_utils.render(request, template_name, ctx)
